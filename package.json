@@ -1,11 +1,12 @@
 {
   "name": "to-arabic-digits",
+  "version": "1.0.0",
   "description": "A lightweight, type-safe utility for converting Western digits to Arabic digits with customizable options",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup index.ts --format cjs,esm --dts",
+    "build": "tsup ./src/index.ts --format cjs,esm --dts",
     "lint": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
