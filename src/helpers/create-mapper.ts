@@ -14,6 +14,9 @@ export const createMapper = (
     "9": "٩",
     "-": "-",
     ".": ".",
+    e: "e", // Preserve scientific notation
+    E: "E", // Preserve scientific notation
+    "+": "+", // Preserve plus sign in scientific notation
   };
 
   const finalMapping = { ...defaultMapping, ...customMapping };

@@ -9,11 +9,17 @@ export const isNullOrUndefined = (input: unknown): boolean =>
 // --------------------------------------------------------->
 // -------------------------------------------------------------->
 
-export const isValidDigitString = (str: string): boolean => {
+export const isValidDigitString = (
+  str: string,
+  allowScientificNotation = false
+): boolean => {
   if (str === "") return true;
-  // This regex allows a hyphen only at the start and dots anywhere
-  // It ensures we don't accept strings like ".-" or "123--456"
-  return /^-?\d*\.?\d*$/.test(str);
+
+  if (allowScientificNotation) {
+    return /^-?\d*\.?\d*(?:[eE][+-]?\d+)?$/.test(str);
+  } else {
+    return /^-?\d*\.?\d*$/.test(str);
+  }
 };
 
 // ---------------------------------------------------->
@@ -22,6 +28,25 @@ export const isValidDigitString = (str: string): boolean => {
 
 export const isValidNumber = (num: number): boolean =>
   !Number.isNaN(num) && Number.isFinite(num);
+
+// ---------------------------------------------------->
+// --------------------------------------------------------->
+// -------------------------------------------------------------->
+
+export const normalizeScientificNotation = (input: string): string => {
+  if (!/[eE]/.test(input)) return input;
+
+  try {
+    const num = Number(input);
+    if (!isValidNumber(num)) return input;
+
+    return num.toString().replace(/[eE][+-]?\d+/, (match) => {
+      return "";
+    });
+  } catch {
+    return input;
+  }
+};
 
 // ---------------------------------------------------->
 // --------------------------------------------------------->

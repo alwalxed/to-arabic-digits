@@ -122,7 +122,47 @@ describe("toArabicDigits", () => {
     describe("fallbackToOriginal", () => {
       it("should return original value when input is invalid and fallbackToOriginal is true", () => {
         expect(toArabicDigits("abc", { fallbackToOriginal: true })).toBe("abc");
-        expect(toArabicDigits(NaN, { fallbackToOriginal: true })).toBe("NaN");
+        expect(toArabicDigits(Number.NaN, { fallbackToOriginal: true })).toBe(
+          "NaN"
+        );
+      });
+    });
+
+    describe("handleScientificNotation", () => {
+      it("should handle scientific notation by default", () => {
+        expect(toArabicDigits(1e3)).toBe("١٠٠٠");
+        expect(toArabicDigits(1.23e2)).toBe("١٢٣");
+        expect(toArabicDigits(1.2e-2)).toBe("٠.٠١٢");
+      });
+
+      it("should handle scientific notation as a string", () => {
+        expect(toArabicDigits("1e3")).toBe("١٠٠٠");
+        expect(toArabicDigits("1.23e2")).toBe("١٢٣");
+        expect(toArabicDigits("1.2e-2")).toBe("٠.٠١٢");
+      });
+
+      it("should preserve scientific notation when handleScientificNotation is false in non-strict mode", () => {
+        expect(
+          toArabicDigits("1e3", {
+            handleScientificNotation: false,
+            strictMode: false,
+          })
+        ).toBe("١e٣");
+        expect(
+          toArabicDigits("1.23e2", {
+            handleScientificNotation: false,
+            strictMode: false,
+          })
+        ).toBe("١.٢٣e٢");
+      });
+
+      it("should throw for scientific notation in strict mode when handleScientificNotation is false", () => {
+        expect(() =>
+          toArabicDigits("1e3", { handleScientificNotation: false })
+        ).toThrow();
+        expect(() =>
+          toArabicDigits("1.23e2", { handleScientificNotation: false })
+        ).toThrow();
       });
     });
   });
@@ -136,25 +176,28 @@ describe("toArabicDigits", () => {
     });
 
     it("should handle scientific notation as a string", () => {
-      expect(() => toArabicDigits("1e10")).toThrow(); // In strict mode
-      expect(toArabicDigits("1e10", { strictMode: false })).toBe("١e١٠");
+      expect(toArabicDigits("1e10")).toBe("١٠٠٠٠٠٠٠٠٠٠");
+      expect(toArabicDigits("1.23e-5")).toBe("٠.٠٠٠٠١٢٣");
     });
 
     it("should handle scientific notation as a number", () => {
       const num = 1e10;
       expect(toArabicDigits(num)).toBe("١٠٠٠٠٠٠٠٠٠٠");
+      expect(toArabicDigits(1.23e-5)).toBe("٠.٠٠٠٠١٢٣");
     });
 
     it("should handle Infinity", () => {
-      expect(() => toArabicDigits(Infinity)).toThrow();
-      expect(toArabicDigits(Infinity, { fallbackToOriginal: true })).toBe(
-        "Infinity"
-      );
+      expect(() => toArabicDigits(Number.POSITIVE_INFINITY)).toThrow();
+      expect(
+        toArabicDigits(Number.POSITIVE_INFINITY, { fallbackToOriginal: true })
+      ).toBe("Infinity");
     });
 
     it("should handle NaN", () => {
-      expect(() => toArabicDigits(NaN)).toThrow();
-      expect(toArabicDigits(NaN, { fallbackToOriginal: true })).toBe("NaN");
+      expect(() => toArabicDigits(Number.NaN)).toThrow();
+      expect(toArabicDigits(Number.NaN, { fallbackToOriginal: true })).toBe(
+        "NaN"
+      );
     });
 
     it("should handle multiple decimal points in non-strict mode", () => {
@@ -188,11 +231,21 @@ describe("toArabicDigits", () => {
       expect(() => toArabicDigits("123")).not.toThrow();
       expect(() => toArabicDigits("-123")).not.toThrow();
       expect(() => toArabicDigits("123.45")).not.toThrow();
+      expect(() => toArabicDigits("1e3")).not.toThrow(); // Scientific notation
+      expect(() => toArabicDigits("1.2e-5")).not.toThrow(); // Scientific notation with negative exponent
 
       // Invalid digit strings
       expect(() => toArabicDigits("123-45")).toThrow(); // Hyphen not at start
       expect(() => toArabicDigits("123a")).toThrow(); // Contains letter
       expect(() => toArabicDigits("--123")).toThrow(); // Multiple hyphens
+
+      // Scientific notation with handleScientificNotation: false
+      expect(() =>
+        toArabicDigits("1e3", { handleScientificNotation: false })
+      ).toThrow();
+      expect(() =>
+        toArabicDigits("1.2e-5", { handleScientificNotation: false })
+      ).toThrow();
     });
   });
 });

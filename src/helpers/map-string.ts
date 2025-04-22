@@ -3,8 +3,23 @@ import { isValidDigitString } from "./utils";
 export const mapString = (
   input: string,
   mapFn: (char: string) => string,
-  strictMode: boolean
+  strictMode: boolean,
+  allowScientificNotation = true
 ): string => {
+  const isValidChar = (char: string): boolean => {
+    if (allowScientificNotation) {
+      return (
+        isValidDigitString(char, true) ||
+        char === "e" ||
+        char === "E" ||
+        char === "+" ||
+        char === "-"
+      );
+    } else {
+      return isValidDigitString(char, false);
+    }
+  };
+
   if (input.length < 1000) {
     const result = [];
 
@@ -12,7 +27,7 @@ export const mapString = (
       const char = input[i];
       const mappedChar = mapFn(char);
 
-      if (strictMode && mappedChar === char && !isValidDigitString(char)) {
+      if (strictMode && mappedChar === char && !isValidChar(char)) {
         throw new Error(`Unexpected character "${char}" in input.`);
       }
 
@@ -25,7 +40,7 @@ export const mapString = (
       ? [...input]
           .map((char) => {
             const mappedChar = mapFn(char);
-            if (mappedChar === char && !isValidDigitString(char)) {
+            if (mappedChar === char && !isValidChar(char)) {
               throw new Error(`Unexpected character "${char}" in input.`);
             }
             return mappedChar;

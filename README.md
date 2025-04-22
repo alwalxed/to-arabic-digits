@@ -10,6 +10,7 @@ A lightweight, type-safe utility for converting Western digits to Arabic digits 
 - 🔧 Customizable mapping
 - 🚫 Strict mode validation
 - 🪶 Zero dependencies
+- 🧮 Scientific notation support
 
 ## Installation
 
@@ -31,12 +32,11 @@ bun add to-arabic-digits
 import { toArabicDigits } from "to-arabic-digits";
 
 toArabicDigits(123); // Returns "١٢٣"
-
 toArabicDigits("456"); // Returns "٤٥٦"
-
 toArabicDigits(7.89); // Returns "٧.٨٩"
-
 toArabicDigits(-42); // Returns "-٤٢"
+toArabicDigits(1.23e5); // Returns "١٢٣٠٠٠"
+toArabicDigits("4.56e-3"); // Returns "٠.٠٠٤٥٦"
 ```
 
 ### With Options
@@ -68,6 +68,14 @@ const largeNumber = "1".repeat(15000);
 const arabicLargeNumber = toArabicDigits(largeNumber, {
   maxLength: 20000, // Increase the default limit of 10000
 }); // Successfully converts the large number
+
+const scientificNumber = 1.23e-5;
+const arabicScientificNumber = toArabicDigits(scientificNumber); // Returns "٠.٠٠٠٠١٢٣"
+
+const preservedNotation = toArabicDigits("1.23e-5", {
+  handleScientificNotation: false,
+  strictMode: false,
+}); // Returns "١.٢٣e-٥"
 ```
 
 ## API
@@ -80,6 +88,7 @@ const arabicLargeNumber = toArabicDigits(largeNumber, {
   - `strictMode` (boolean, default: true): Throw errors for invalid inputs
   - `customMapping` (object, default: {}): Custom character mapping to override defaults
   - `maxLength` (number, default: 10000): Maximum allowed length for string inputs
+  - `handleScientificNotation` (boolean, default: true): Convert scientific notation to standard decimal format
 
 ### Returns
 
