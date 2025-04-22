@@ -1,0 +1,54 @@
+{
+  "name": "to-arabic-digits",
+  "description": "A lightweight, type-safe utility for converting Western digits to Arabic digits with customizable options",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup index.ts --format cjs,esm --dts",
+    "lint": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "tsup": "^8.3.5",
+    "typescript": "^5.0.0",
+    "vitest": "^3.1.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "author": "Awa alwalxed@proton.me",
+  "license": "MIT",
+  "homepage": "https://github.com/alwalxed/to-arabic-digits",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alwalxed/to-arabic-digits.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alwalxed/to-arabic-digits/issues"
+  },
+  "keywords": [
+    "arabic",
+    "digits",
+    "numbers",
+    "conversion",
+    "i18n",
+    "internationalization",
+    "localization",
+    "arabic-numerals",
+    "typescript",
+    "functional"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
